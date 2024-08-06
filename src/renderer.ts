@@ -31,3 +31,10 @@ import './index.css'
 console.log(
   '👋 This message is being logged by "renderer.ts", included via Vite'
 )
+
+const func = async () => {
+  const response = await window.versions.ping()
+  console.log(response) // 打印 'pong'
+}
+
+func()

@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'path'
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -34,6 +34,7 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 // app.on('ready', createWindow)
 app.whenReady().then(() => {
+  ipcMain.handle('ping', () => 'pong')
   createWindow()
 
   app.on('activate', () => {
