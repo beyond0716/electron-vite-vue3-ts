@@ -9,6 +9,12 @@ if (require('electron-squirrel-startup')) {
   app.quit()
 }
 
+const handleSetTitle = (event, title)=> {
+  const webContents = event.sender
+  const win = BrowserWindow.fromWebContents(webContents)
+  win.setTitle(title)
+}
+
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -38,6 +44,7 @@ const createWindow = () => {
 // app.on('ready', createWindow)
 app.whenReady().then(() => {
   ipcMain.handle('ping', () => 'pong')
+  ipcMain.on('set-title', handleSetTitle)
   createWindow()
 
   app.on('activate', () => {
