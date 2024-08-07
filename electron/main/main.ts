@@ -1,5 +1,5 @@
 import { updateElectronApp } from 'update-electron-app'
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain } from 'electron'
 import path from 'path'
 
 updateElectronApp()
@@ -9,10 +9,17 @@ if (require('electron-squirrel-startup')) {
   app.quit()
 }
 
-const handleSetTitle = (event, title)=> {
+const handleSetTitle = (event, title) => {
   const webContents = event.sender
   const win = BrowserWindow.fromWebContents(webContents)
   win.setTitle(title)
+}
+
+const handleFileOpen = async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog({})
+  if (!canceled) {
+    return filePaths[0]
+  }
 }
 
 const createWindow = () => {
@@ -45,6 +52,7 @@ const createWindow = () => {
 app.whenReady().then(() => {
   ipcMain.handle('ping', () => 'pong')
   ipcMain.on('set-title', handleSetTitle)
+  ipcMain.handle('dialog:openFile', handleFileOpen)
   createWindow()
 
   app.on('activate', () => {

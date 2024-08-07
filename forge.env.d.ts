@@ -40,4 +40,5 @@ declare module 'vite' {
 
 export interface IElectronAPI {
   setTitle: (title) => void
+  openFile: () => Promise<void>
 }

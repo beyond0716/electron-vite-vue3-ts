@@ -13,6 +13,7 @@ contextBridge.exposeInMainWorld('versions', {
 
 contextBridge.exposeInMainWorld('electronAPI', {
   setTitle: (title) => ipcRenderer.send('set-title', title),
+  openFile: () => ipcRenderer.invoke('dialog:openFile'),
 })
 
 // 所有的 Node.js API接口 都可以在 preload 进程中被调用.

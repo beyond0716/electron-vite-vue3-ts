@@ -1,8 +1,16 @@
 <template>
   <h1>💖 Hello World!</h1>
   <p>{{ msg }}</p>
-  Title: <input v-model="title" />
-  <button type="button" @click="handleClick">Set</button>
+
+  <div>
+    Title: <input v-model="title" />
+    <button type="button" @click="handleClick">Set</button>
+  </div>
+
+  <div>
+    <button type="button" @click="handleOpen">Open a File</button>
+    File path: <strong>{{ filePath }}</strong>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -14,5 +22,10 @@ const msg = ref('Welcome to your Electron application.')
 const title = ref('')
 const handleClick = () => {
   window.electronAPI.setTitle(title.value)
+}
+
+let filePath = ref('')
+const handleOpen = async () => {
+  filePath.value = await window.electronAPI.openFile()
 }
 </script>
