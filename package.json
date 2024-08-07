@@ -20,6 +20,7 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
     "@electron-forge/plugin-fuses": "^7.4.0",
     "@electron-forge/plugin-vite": "^7.4.0",
+    "@electron-forge/publisher-github": "^7.4.0",
     "@electron/fuses": "^1.8.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
@@ -37,8 +38,10 @@
     "email": "beyond0716@foxmail.com"
   },
   "license": "MIT",
+  "repository": "https://github.com/beyond0716/electron-vite-vue3-ts.git",
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1",
+    "update-electron-app": "^3.0.0",
     "vue": "^3.4.35"
   }
 }
