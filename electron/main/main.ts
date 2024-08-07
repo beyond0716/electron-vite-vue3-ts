@@ -1,5 +1,5 @@
 import { updateElectronApp } from 'update-electron-app'
-import { app, BrowserWindow, dialog, ipcMain } from 'electron'
+import { app, BrowserWindow, dialog, Menu, ipcMain } from 'electron'
 import path from 'path'
 
 updateElectronApp()
@@ -32,6 +32,23 @@ const createWindow = () => {
     },
   })
 
+  const menu = Menu.buildFromTemplate([
+    {
+      label: app.name,
+      submenu: [
+        {
+          click: () => mainWindow.webContents.send('update-counter', 1),
+          label: 'Increment',
+        },
+        {
+          click: () => mainWindow.webContents.send('update-counter', -1),
+          label: 'Decrement',
+        },
+      ],
+    },
+  ])
+  Menu.setApplicationMenu(menu)
+
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL)
@@ -53,6 +70,9 @@ app.whenReady().then(() => {
   ipcMain.handle('ping', () => 'pong')
   ipcMain.on('set-title', handleSetTitle)
   ipcMain.handle('dialog:openFile', handleFileOpen)
+  ipcMain.on('counter-value', (_event, value) => {
+    console.log(value) // will print value to Node console
+  })
   createWindow()
 
   app.on('activate', () => {
