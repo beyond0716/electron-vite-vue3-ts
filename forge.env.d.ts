@@ -24,7 +24,7 @@ declare global {
   }
 
   interface Window {
-    electronAPI: IElectronAPI
+    darkMode: IDarkMode
   }
 }
 
@@ -38,7 +38,7 @@ declare module 'vite' {
   }
 }
 
-export interface IElectronAPI {
-  setTitle: (title) => void
-  openFile: () => Promise<void>
+export interface IDarkMode {
+  toggle: () => Promise<boolean>
+  system: () => void
 }
