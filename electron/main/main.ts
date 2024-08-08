@@ -1,5 +1,5 @@
 import { updateElectronApp } from 'update-electron-app'
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron'
 import path from 'path'
 
 updateElectronApp()
@@ -28,6 +28,19 @@ const createWindow = () => {
 
   mainWindow.webContents.openDevTools()
 }
+
+ipcMain.handle('dark-mode:toggle', () => {
+  if (nativeTheme.shouldUseDarkColors) {
+    nativeTheme.themeSource = 'light'
+  } else {
+    nativeTheme.themeSource = 'dark'
+  }
+  return nativeTheme.shouldUseDarkColors
+})
+
+ipcMain.handle('dark-mode:system', () => {
+  nativeTheme.themeSource = 'system'
+})
 
 app.whenReady().then(() => {
   createWindow()
