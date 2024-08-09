@@ -24,7 +24,7 @@ declare global {
   }
 
   interface Window {
-    electronAPI: IElectronAPI
+    shell: IShell
   }
 }
 
@@ -38,7 +38,6 @@ declare module 'vite' {
   }
 }
 
-export interface IElectronAPI {
-  setTitle: (title) => void
-  openFile: () => Promise<void>
+export interface IShell {
+  open: () => void
 }
