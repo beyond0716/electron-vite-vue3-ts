@@ -1,5 +1,12 @@
 import { updateElectronApp } from 'update-electron-app'
-import { app, BrowserWindow, ipcMain } from 'electron'
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  MenuItem,
+  globalShortcut,
+} from 'electron'
 import path from 'path'
 
 updateElectronApp()
@@ -26,18 +33,51 @@ const createWindow = () => {
     )
   }
 
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.control && input.key.toLowerCase() === 'i') {
+      console.log('Pressed Control+I')
+      event.preventDefault()
+    }
+  })
+
   mainWindow.webContents.openDevTools()
 }
 
-app.whenReady().then(() => {
-  createWindow()
-
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow()
-    }
+const menu = new Menu()
+menu.append(
+  new MenuItem({
+    label: 'Electron',
+    submenu: [
+      {
+        role: 'help',
+        accelerator:
+          process.platform === 'darwin' ? 'Alt+Cmd+I' : 'Alt+Shift+I',
+        click: () => {
+          console.log('Electron rocks!')
+        },
+      },
+    ],
   })
-})
+)
+
+Menu.setApplicationMenu(menu)
+
+app
+  .whenReady()
+  .then(() => {
+    globalShortcut.register('Alt+CommandOrControl+J', () => {
+      console.log('Electron loves global shortcuts!')
+    })
+  })
+  .then(() => {
+    createWindow()
+
+    app.on('activate', () => {
+      if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow()
+      }
+    })
+  })
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
