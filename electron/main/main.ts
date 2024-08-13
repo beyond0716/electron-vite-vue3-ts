@@ -1,6 +1,7 @@
 import { updateElectronApp } from 'update-electron-app'
 import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'path'
+import fs from 'fs'
 
 updateElectronApp()
 
@@ -29,6 +30,11 @@ const createWindow = () => {
   mainWindow.webContents.openDevTools()
 }
 
+const fileName = 'recently-used.md'
+fs.writeFile(fileName, 'Lorem Ipsum', () => {
+  app.addRecentDocument(path.join(__dirname, fileName))
+})
+
 app.whenReady().then(() => {
   createWindow()
 
@@ -40,6 +46,7 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
+  app.clearRecentDocuments()
   if (process.platform !== 'darwin') {
     app.quit()
   }
