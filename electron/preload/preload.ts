@@ -1,3 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
-contextBridge.exposeInMainWorld('', {})
+contextBridge.exposeInMainWorld('electron', {
+  startDrag: (fileName: string) => ipcRenderer.send('ondragstart', fileName),
+})

@@ -24,7 +24,7 @@ declare global {
   }
 
   interface Window {
-    electronAPI: IElectronAPI
+    electron: IElectron
   }
 }
 
@@ -38,7 +38,6 @@ declare module 'vite' {
   }
 }
 
-export interface IElectronAPI {
-  setTitle: (title) => void
-  openFile: () => Promise<void>
+export interface IElectron {
+  startDrag: (fileName: string) => void
 }
