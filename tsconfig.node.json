@@ -1,0 +1,24 @@
+{
+  "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
+  "include": [
+    "vite.base.config.*",
+    "vite.main.config.*",
+    "vite.preload.config.*",
+    "vite.renderer.config.*",
+    "electron/main/**/*",
+    "electron/preload/**/*"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "target": "esnext",
+    "module": "esnext",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "moduleResolution": "node",
+    "resolveJsonModule": true
+  }
+}

@@ -21,6 +21,9 @@
     "@electron-forge/plugin-fuses": "^7.4.0",
     "@electron-forge/plugin-vite": "^7.4.0",
     "@electron-forge/publisher-github": "^7.4.0",
+    "@electron-toolkit/eslint-config": "^1.0.2",
+    "@electron-toolkit/eslint-config-ts": "^2.0.0",
+    "@electron-toolkit/tsconfig": "^1.0.1",
     "@electron/fuses": "^1.8.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
@@ -43,6 +46,8 @@
   "license": "MIT",
   "repository": "https://github.com/beyond0716/electron-vite-vue3-ts.git",
   "dependencies": {
+    "@electron-toolkit/preload": "^3.0.1",
+    "@electron-toolkit/utils": "^3.0.0",
     "electron-squirrel-startup": "^1.0.1",
     "element-plus": "^2.7.8",
     "update-electron-app": "^3.0.0",
