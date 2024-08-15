@@ -6,6 +6,7 @@
   },
   "extends": [
     "eslint:recommended",
+    "plugin:vue/vue3-recommended",
     "@electron-toolkit",
     "@electron-toolkit/eslint-config-ts/eslint-recommended",
     "plugin:@typescript-eslint/eslint-recommended",
