@@ -8,6 +8,7 @@
     "eslint:recommended",
     "plugin:vue/vue3-recommended",
     "@vue/eslint-config-typescript/recommended",
+    "@vue/eslint-config-prettier",
     "@electron-toolkit",
     "@electron-toolkit/eslint-config-ts/eslint-recommended",
     "plugin:@typescript-eslint/eslint-recommended",
