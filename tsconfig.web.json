@@ -7,14 +7,12 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "target": "esnext",
-    "module": "esnext",
+    "target": "ESNext",
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
     "sourceMap": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true
+    "resolveJsonModule": false
   }
 }

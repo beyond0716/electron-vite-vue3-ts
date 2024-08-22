@@ -1,24 +1,34 @@
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
-  "include": [
-    "vite.base.config.*",
-    "vite.main.config.*",
-    "vite.preload.config.*",
-    "vite.renderer.config.*",
-    "electron/main/**/*",
-    "electron/preload/**/*"
-  ],
+  "include": ["vite.base.config.*", "vite.main.config.*", "vite.preload.config.*", "vite.renderer.config.*", "electron/main/**/*", "electron/preload/**/*"],
   "compilerOptions": {
     "composite": true,
-    "target": "esnext",
-    "module": "esnext",
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "moduleDetection": "force",
     "allowJs": true,
-    "skipLibCheck": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "moduleResolution": "node",
-    "resolveJsonModule": true
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "resolveJsonModule": false, // ESM doesn't yet support JSON modules.
+    "jsx": "react",
+    "declaration": true,
+    "newLine": "lf",
+    "stripInternal": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noEmitOnError": true,
+    "useDefineForClassFields": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
   }
 }
