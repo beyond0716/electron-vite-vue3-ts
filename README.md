@@ -14,6 +14,8 @@
 
 ## 问题汇总
 
+[如何支持 import 'virtual:uno.css'语法？](https://segmentfault.com/q/1010000043642556)
+
 [electron-forge-vite-esm-test](https://github.com/jdms754/electron-forge-vite-esm-test)
 
 ["type": "module" in package.json for Vite templates #3502](https://github.com/electron/forge/issues/3502)
