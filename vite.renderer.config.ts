@@ -6,6 +6,9 @@ import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import { pluginExposeRenderer } from './vite.base.config';
+import { resolve } from 'path';
+
+const pathSrc = resolve(__dirname, 'src');
 
 // https://vitejs.dev/config
 export default defineConfig((env) => {
@@ -32,7 +35,10 @@ export default defineConfig((env) => {
       })
     ],
     resolve: {
-      preserveSymlinks: true
+      preserveSymlinks: true,
+      alias: {
+        '@': pathSrc
+      }
     },
     clearScreen: false
   } as UserConfig;
