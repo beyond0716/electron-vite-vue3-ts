@@ -14,6 +14,8 @@
 
 ## 问题汇总
 
+[解决使用Vscode调试Electron主进程时终端打印中文时乱码问题](https://juejin.cn/post/7341962661825200179)
+
 [如何支持 import 'virtual:uno.css'语法？](https://segmentfault.com/q/1010000043642556)
 
 [electron-forge-vite-esm-test](https://github.com/jdms754/electron-forge-vite-esm-test)

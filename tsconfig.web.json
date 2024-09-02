@@ -1,18 +1,42 @@
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
-  "include": ["src/env.d.ts", "src/**/*", "src/**/*.vue", "./*.d.ts"],
+  // 指定待编译的文件
+  "include": [
+    // ** : 任意目录，* : 任意文件
+    "src/env.d.ts",
+    "src/**/*",
+    "src/**/*.vue",
+    "./*.d.ts"
+  ],
+  // 指定排除的文件
+  "exclude": ["node_modules"],
+  // 指定编译的文件，没有include和exclude时候用
+  "file": [],
   "compilerOptions": {
     "composite": true,
-    "baseUrl": ".",
+    "target": "ESNext", // 生成js的版本，下一版本
+    "module": "ESNext", // 生成的module的形式，esm，cmd，amd啥的
+    "strict": false, // 是否严格模式
+    "jsx": "preserve", // jsx用于的开发环境，preserve/react/RN
+    "importHelpers": true, // 指定是否引入tslib里的复制工具函数
+    "moduleResolution": "node16", // 用于选择模块解析策略 Node/Classic
+    "experimentalDecorators": true, // 用于指定是否启用实验性的装饰器特性
+    "esModuleInterop": true, // 通过导入内容创建命名空间，实现CommonJS和ES模块之间的互操作性
+    "allowSyntheticDefaultImports": true, // 用于允许从没有默认导出的模块中默认导入
+    "sourceMap": true, // 编译时是否生成.map文件
+    "baseUrl": ".", // 用于设置解析非相对模块名称的基本目录，相对模块不会受到baseUrl的影响
+    //用于指定需要包含的模块，只有在这里列出的模块的声明文件才会被加载
+    "types": ["webpack-env"],
+    // 用于设置模块名到基于baseUrl的路径映射
     "paths": {
       "@/*": ["src/*"]
     },
-    "target": "ESNext",
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "noImplicitAny": true,
-    "sourceMap": true,
-    "resolveJsonModule": false
+    // 指定要包含在编译中的库文件
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
+    "allowJs": true, // 允许编译器编译JS，JSX文件
+    "checkJs": true, // 允许在JS文件中报错，通常与allowJS一起使用
+    "skipLibCheck": true, // 是否跳过声明文件的类型检查，这可以在编译期间以牺牲类型系统准确性为代价来节省时间，默认：false。
+    "noImplicitAny": false, // 不允许隐式的any类型
+    "resolveJsonModule": false // 是否解析 JSON 模块，默认：false
   }
 }
