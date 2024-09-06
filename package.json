@@ -27,6 +27,7 @@
     "@electron-toolkit/tsconfig": "^1.0.1",
     "@electron/fuses": "^1.8.0",
     "@rushstack/eslint-patch": "^1.10.4",
+    "@types/node": "^22.5.2",
     "@typescript-eslint/eslint-plugin": "^8.1.0",
     "@typescript-eslint/parser": "^8.1.0",
     "@vitejs/plugin-vue": "^5.1.2",
@@ -62,7 +63,9 @@
     "electron-log": "^5.1.7",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^10.0.0",
+    "electron-updater": "^6.2.1",
     "element-plus": "^2.7.8",
+    "mysql2": "^3.11.0",
     "update-electron-app": "^3.0.0",
     "vue": "^3.4.35"
   }

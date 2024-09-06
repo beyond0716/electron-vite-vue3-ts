@@ -42,12 +42,42 @@ export interface IAPI {
   installLicence();
   // 以桌面的默认方式打开给定的文件
   openPath(path: string): Promise<string>;
+  // 打开日志文件的文件夹
+  openLogsDir();
+  // 选择路径
+  showOpenDialog(options: OpenDialogOptions, callbackMsg: string);
   // electron-store的api
   store: {
     get: (key: string) => any;
     set: (key: string, val: any) => void;
     // any other methods you've defined...
   };
+  // 加载初始化数据
+  loadInitInfo: () => string;
+  // 检查更新
+  checkForUpdate();
+  // 用于打开文件夹之后接收打开的路径
+  openDialogCallback(callback: (event: IpcRendererEvent, callbackMsg: string, path: string) => void);
+
+  /*
+   * 发送更新信息
+   * msg：输出的消息
+   */
+  updateMsg(callback: (event: IpcRendererEvent, msg: any) => void);
+  /*
+   * 发送下载进度
+   */
+  downloadProgress(callback: (event: IpcRendererEvent, msg: ProgressInfo) => void);
+  /*
+   * 输出日志到主页面
+   * msg：输出的消息
+   * append：是否追加
+   * flgHtml：消息是否是html
+   */
+  outputLog(callback: (event: IpcRendererEvent, msg: string, flgAppend = false, flgHtml = false) => void);
   downloadOne: (url: string) => void;
+  // 测试mysql连接
+  testConnect();
+  // 消息弹框
   showMessageBox: (options: MessageBoxOptions) => void;
 }

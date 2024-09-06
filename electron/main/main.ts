@@ -1,19 +1,30 @@
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 // import { updateElectronApp } from 'update-electron-app';
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
-import type { MessageBoxOptions } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron';
+import type { MessageBoxOptions, OpenDialogOptions } from 'electron';
 import Store from 'electron-store';
+import electronUpdater, { type AppUpdater, type UpdateInfo } from 'electron-updater';
 import * as AnyProxy from 'anyproxy';
 import * as os from 'os';
 import path from 'path';
 import { Worker } from 'worker_threads';
 import * as child_process from 'child_process';
 import * as iconv from 'iconv-lite';
+import * as mysql from 'mysql2';
 import { NodeWorkerResponse, DlEventEnum, NwrEnum, DownloadOption } from './service.js';
 import log from './log.js';
+import type { IUpdateMessage } from './types.js';
 
 // updateElectronApp();
+
+export function getAutoUpdater(): AppUpdater {
+  // Using destructuring to access autoUpdater due to the CommonJS module of 'electron-updater'.
+  // It is a workaround for ESM compatibility issues, see https://github.com/electron-userland/electron-builder/issues/7976.
+  const { autoUpdater } = electronUpdater;
+  return autoUpdater;
+}
+const autoUpdater = getAutoUpdater();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -39,7 +50,6 @@ const createWindow = () => {
   });
 
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-    console.log('🚀 ~ createWindow ~ MAIN_WINDOW_VITE_DEV_SERVER_URL:', MAIN_WINDOW_VITE_DEV_SERVER_URL);
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
     mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
@@ -67,6 +77,11 @@ app.whenReady().then(() => {
     installCAFile(path.join(<string>store.get('caPath'), 'rootCA.crt'));
   });
 
+  // 打开日志文件夹
+  ipcMain.on('open-logs-dir', () => {
+    shell.openPath(path.join(app.getPath('appData'), 'wechatDownload', 'logs'));
+  });
+
   // electron-store的api
   ipcMain.on('electron-store-get', (event, val) => {
     event.returnValue = store.get(val);
@@ -75,6 +90,25 @@ app.whenReady().then(() => {
   ipcMain.on('electron-store-set', async (_event, key, val) => {
     // logger.info('change setting', key, val);
     store.set(key, val);
+  });
+
+  // 选择路径
+  ipcMain.on('show-open-dialog', (event, options: OpenDialogOptions, callbackMsg: string) => {
+    const _win = BrowserWindow.fromWebContents(event.sender);
+    if (_win) {
+      dialog
+        .showOpenDialog(_win, options)
+        .then((result) => {
+          if (!result.canceled) {
+            // 路径信息回调
+            event.sender.send('open-dialog-callback', callbackMsg, result.filePaths[0]);
+            store.set(callbackMsg, result.filePaths[0]);
+          }
+        })
+        .catch((err) => {
+          log.error(err);
+        });
+    }
   });
 
   // 消息弹框
@@ -87,6 +121,21 @@ app.whenReady().then(() => {
 
   // 根据url下载单篇文章
   ipcMain.on('download-one', (_event, url: string) => downloadOne(url));
+
+  // 测试数据库连接
+  ipcMain.on('test-connect', async () => testMysqlConnection());
+
+  // 检查更新
+  ipcMain.on('check-for-update', () => {
+    log.info('触发检查更新');
+    autoUpdater.checkForUpdates();
+  });
+
+  // 返回初始化页面需要的信息
+  ipcMain.on('load-init-info', (event) => {
+    // 暂时只需要版本号
+    event.returnValue = app.getVersion();
+  });
 });
 
 app.on('window-all-closed', () => {
@@ -239,6 +288,38 @@ function loadWorkerData(dlEvent: DlEventEnum, data?) {
 }
 
 /*
+ * 测试mysql数据库连接
+ */
+async function testMysqlConnection() {
+  if (1 != store.get('dlMysql') && 'db' != store.get('dlSource')) return;
+
+  const CONNECTION = mysql.createConnection({
+    host: <string>store.get('mysqlHost'),
+    port: <number>store.get('mysqlPort'),
+    user: <string>store.get('mysqlUser'),
+    password: <string>store.get('mysqlPassword'),
+    database: <string>store.get('mysqlDatabase'),
+    charset: 'utf8mb4'
+  });
+  const sql = 'show tables';
+  CONNECTION.query(sql, (err) => {
+    if (err) {
+      log.error('mysql连接失败', err);
+      dialog.showMessageBox(mainWindow, {
+        type: 'error',
+        message: '连接失败，请检查参数'
+      });
+    } else {
+      dialog.showMessageBox(mainWindow, {
+        type: 'info',
+        message: '连接成功'
+      });
+    }
+    return CONNECTION;
+  });
+}
+
+/*
  * 输出日志到主页面
  * msg：输出的消息
  * append：是否追加
@@ -314,3 +395,87 @@ function sotreSetNotExit(key, value): boolean {
   log.info('setting', key, oldValue);
   return false;
 }
+
+// 定义返回给渲染层的相关提示文案
+const updateMessage = {
+  error: { code: 1, msg: '检查更新出错' },
+  checking: { code: 2, msg: '正在检查更新……' },
+  updateAva: { code: 3, msg: '检测到新版本，正在下载……' },
+  updateNotAva: { code: 4, msg: '现在使用的就是最新版本，不用更新' }
+};
+
+function sendUpdateMessage(msg: IUpdateMessage) {
+  mainWindow.webContents.send('update-msg', msg);
+}
+
+// 设置自动下载为false，也就是说不开始自动下载
+autoUpdater.autoDownload = false;
+
+// 检测下载错误
+autoUpdater.on('error', (error) => {
+  log.error('更新异常', error);
+  sendUpdateMessage(updateMessage.error);
+});
+
+// 检测是否需要更新
+autoUpdater.on('checking-for-update', () => {
+  log.info(updateMessage.checking);
+  sendUpdateMessage(updateMessage.checking);
+});
+
+// 检测到可以更新时
+autoUpdater.on('update-available', (releaseInfo: UpdateInfo) => {
+  const releaseNotes = releaseInfo.releaseNotes;
+  let releaseContent = '';
+  if (releaseNotes) {
+    if (typeof releaseNotes === 'string') {
+      releaseContent = <string>releaseNotes;
+    } else if (releaseNotes instanceof Array) {
+      releaseNotes.forEach((releaseNote) => {
+        releaseContent += `${releaseNote}\n`;
+      });
+    }
+  } else {
+    releaseContent = '暂无更新说明';
+  }
+  dialog
+    .showMessageBox({
+      type: 'info',
+      title: '应用有新的更新',
+      detail: releaseContent,
+      message: '发现新版本，是否现在更新？',
+      buttons: ['否', '是']
+    })
+    .then(({ response }) => {
+      if (response === 1) {
+        sendUpdateMessage(updateMessage.updateAva);
+        // 下载更新
+        autoUpdater.downloadUpdate();
+      }
+    });
+});
+
+// 检测到不需要更新时
+autoUpdater.on('update-not-available', () => {
+  log.info(updateMessage.updateNotAva);
+  sendUpdateMessage(updateMessage.updateNotAva);
+});
+
+// 更新下载进度
+autoUpdater.on('download-progress', (progress) => {
+  mainWindow.webContents.send('download-progress', progress);
+});
+
+// 当需要更新的内容下载完成后
+autoUpdater.on('update-downloaded', () => {
+  log.info('下载完成，准备更新');
+  dialog
+    .showMessageBox({
+      title: '安装更新',
+      message: '更新下载完毕，应用将重启并进行安装'
+    })
+    .then(() => {
+      // 退出并安装应用
+      setImmediate(() => autoUpdater.quitAndInstall());
+    });
+});

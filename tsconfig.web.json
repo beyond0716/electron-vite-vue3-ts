@@ -36,7 +36,7 @@
     "allowJs": true, // 允许编译器编译JS，JSX文件
     "checkJs": true, // 允许在JS文件中报错，通常与allowJS一起使用
     "skipLibCheck": true, // 是否跳过声明文件的类型检查，这可以在编译期间以牺牲类型系统准确性为代价来节省时间，默认：false。
-    "noImplicitAny": false, // 不允许隐式的any类型
+    "noImplicitAny": true, // 不允许隐式的any类型
     "resolveJsonModule": false // 是否解析 JSON 模块，默认：false
   }
 }

@@ -9,7 +9,7 @@
     "moduleDetection": "force",
     "allowJs": true,
     "esModuleInterop": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "sourceMap": true,
     "baseUrl": ".",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
@@ -29,6 +29,7 @@
     "noEmitOnError": true,
     "useDefineForClassFields": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node"]
   }
 }
